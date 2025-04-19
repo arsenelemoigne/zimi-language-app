@@ -1,15 +1,11 @@
 {
   "version": 2,
+  "builds": [
+    { "src": "package.json", "use": "@vercel/next" },
+    { "src": "public/**/*", "use": "@vercel/static" }
+  ],
   "routes": [
-    { 
-      "src": "/main.html", 
-      "dest": "/main.html",
-      "headers": {
-        "Cache-Control": "no-store"
-      }
-    },
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/signup", "dest": "/signup.html" },
-    { "handle": "filesystem" }
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/public/$1" }
   ]
 } 

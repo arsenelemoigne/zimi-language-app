@@ -153,13 +153,12 @@ function toggleChat() {
         if (isChatOpen) {
             const currentLesson = lessons[currentLessonIndex];
             const welcomeMessage = `Hi! I'm Zimi, your language learning assistant. We're learning about "${currentLesson.phrase}" (${currentLesson.translation}). Would you like to practice using this phrase?`;
-            addMessage(welcomeMessage, 'bot');
+            addMessage(welcomeMessage, 'bot-message');
         }
     }
 }
 
-async function handleChat(event) {
-    event.preventDefault();
+async function sendMessage() {
     const userInput = document.getElementById('userInput');
     const message = userInput.value.trim();
     
@@ -170,12 +169,26 @@ async function handleChat(event) {
     userInput.value = '';
 
     try {
+        // Get current lesson context
+        const currentLesson = lessons[currentLessonIndex];
+        
+        // Prepare the message with context
+        const contextMessage = {
+            message: message,
+            lessonContext: {
+                phrase: currentLesson.phrase,
+                translation: currentLesson.translation,
+                grammarTip: currentLesson.grammarTip,
+                culturalTip: currentLesson.culturalTip
+            }
+        };
+
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message })
+            body: JSON.stringify(contextMessage)
         });
 
         if (!response.ok) {
@@ -191,7 +204,7 @@ async function handleChat(event) {
 }
 
 function addMessage(text, className) {
-    const messagesContainer = document.querySelector('.chat-messages');
+    const messagesContainer = document.getElementById('chatMessages');
     const messageElement = document.createElement('div');
     messageElement.className = `message ${className}`;
     messageElement.textContent = text;
@@ -199,15 +212,36 @@ function addMessage(text, className) {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
-// Add event listeners
-document.getElementById('userInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        handleChat(e);
+// Add event listeners for chat
+document.addEventListener('DOMContentLoaded', () => {
+    const userInput = document.getElementById('userInput');
+    if (userInput) {
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+    
+    const passwordInput = document.getElementById('password');
+    if (passwordInput) {
+        passwordInput.addEventListener('input', (e) => {
+            updatePasswordChecks(e.target.value);
+        });
+    }
+    
+    // Check authentication status
+    checkAuth();
+    
+    // Initialize lesson if on main page
+    if (window.location.pathname.includes('main.html')) {
+        const progress = getUserProgress();
+        currentLessonIndex = progress.currentLesson;
+        loadLesson(currentLessonIndex);
+        updateProgressDisplay();
     }
 });
-
-document.querySelector('.send-button').addEventListener('click', handleChat);
 
 // Lesson Data
 const lessons = [
@@ -316,34 +350,4 @@ function markLessonComplete() {
         saveUserProgress(progress);
         loadLesson(currentLessonIndex);
     }
-}
-
-// Initialize lesson on page load
-document.addEventListener('DOMContentLoaded', () => {
-    const userInput = document.getElementById('userInput');
-    if (userInput) {
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendMessage();
-            }
-        });
-    }
-    
-    const passwordInput = document.getElementById('password');
-    if (passwordInput) {
-        passwordInput.addEventListener('input', (e) => {
-            updatePasswordChecks(e.target.value);
-        });
-    }
-    
-    // Check authentication status
-    checkAuth();
-    
-    // Initialize lesson if on main page
-    if (window.location.pathname.includes('main.html')) {
-        const progress = getUserProgress();
-        currentLessonIndex = progress.currentLesson;
-        loadLesson(currentLessonIndex);
-        updateProgressDisplay();
-    }
-}); 
+} 

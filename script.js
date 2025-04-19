@@ -185,52 +185,24 @@ async function sendMessage() {
 
     try {
         const currentLesson = lessons[currentLessonIndex];
-        const apiKey = localStorage.getItem('openai_api_key');
-        
-        if (!apiKey) {
-            throw new Error('API key not found');
-        }
 
-        // Prepare the conversation context
-        const conversationHistory = chatHistory.slice(-4); // Keep last 4 messages for context
-        const systemPrompt = `You are Zimi, an Italian language learning assistant. The current lesson is about the phrase "${currentLesson.phrase}" which means "${currentLesson.translation}". 
-        Grammar tip: ${currentLesson.grammarTip}
-        Cultural tip: ${currentLesson.culturalTip}
-        
-        Your role is to:
-        1. Help users practice using this phrase correctly
-        2. Provide gentle corrections when needed
-        3. Engage in simple Italian conversations using the learned phrase
-        4. Share relevant cultural insights
-        5. Keep responses concise and beginner-friendly
-        6. Always include both Italian and English translations in your responses`;
-
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    ...conversationHistory,
-                    { role: "user", content: userMessage }
-                ],
-                temperature: 0.7,
-                max_tokens: 150
+                message: userMessage,
+                lesson: currentLesson
             })
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-            console.error('API Error:', data);
-            throw new Error(data.error?.message || 'API request failed');
+            throw new Error('Chat service temporarily unavailable');
         }
 
-        const botResponse = data.choices[0].message.content;
+        const data = await response.json();
+        const botResponse = data.response;
 
         // Remove typing indicator
         typingIndicator.remove();
@@ -247,19 +219,7 @@ async function sendMessage() {
     } catch (error) {
         console.error('Chat error:', error);
         typingIndicator.remove();
-        
-        if (error.message === 'API key not found') {
-            const apiKey = prompt('Please enter your OpenAI API key (starting with sk-proj-):');
-            if (apiKey && apiKey.startsWith('sk-proj-')) {
-                localStorage.setItem('openai_api_key', apiKey);
-                // Retry the message
-                sendMessage();
-            } else {
-                addMessage("Please enter a valid API key starting with 'sk-proj-'. You can get one from OpenAI's website.", 'bot');
-            }
-        } else {
-            addMessage(`Error: ${error.message}. Please check your API key and try again.`, 'bot');
-        }
+        addMessage("I apologize, but I'm having trouble connecting right now. Please try again in a moment.", 'bot');
     }
 }
 

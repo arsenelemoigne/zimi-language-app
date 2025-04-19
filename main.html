@@ -53,13 +53,13 @@
         <!-- Chat Interface -->
         <div id="chatInterface" class="chat-interface hidden">
             <div class="chat-header">
-                <h3>Chat with Zimi</h3>
-                <button onclick="toggleChat()" class="close-btn">&times;</button>
+                <span>Chat with Zimi</span>
+                <button onclick="toggleChat()" class="close-button">×</button>
             </div>
             <div id="chatMessages" class="chat-messages"></div>
-            <div class="chat-input">
-                <input type="text" id="userInput" placeholder="Type your message...">
-                <button onclick="sendMessage()" class="btn-primary">Send</button>
+            <div class="chat-input-container">
+                <input type="text" id="userInput" placeholder="Type your message in Italian or English..." />
+                <button onclick="sendMessage()" class="send-button">Send</button>
             </div>
         </div>
     </div>

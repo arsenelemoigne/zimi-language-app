@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/main", "dest": "/main.html" },
+    { "src": "/signup", "dest": "/signup.html" },
+    { "handle": "filesystem" }
+  ]
+} 

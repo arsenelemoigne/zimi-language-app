@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zimi - Today's Lesson</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="top-nav">
+            <h1>Zimi</h1>
+            <div class="nav-right">
+                <span id="userProgress" class="progress-text">Progress: 0/3</span>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
+        </nav>
+        
+        <div class="lesson-container">
+            <div class="lesson-navigation">
+                <button onclick="previousLesson()" class="btn-nav" id="prevButton">← Previous</button>
+                <h2>Lesson <span id="lessonNumber">1</span></h2>
+                <button onclick="nextLesson()" class="btn-nav" id="nextButton">Next →</button>
+            </div>
+
+            <div class="lesson-content">
+                <div class="lesson-status">
+                    <span id="lessonStatus" class="status-badge">In Progress</span>
+                </div>
+                
+                <div class="phrase-box">
+                    <h3 class="italian" id="lessonPhrase">Dove vai?</h3>
+                    <p class="translation" id="lessonTranslation">Where are you going?</p>
+                </div>
+                
+                <div class="tips-container">
+                    <div class="tip grammar-tip">
+                        <h4>Grammar Tip</h4>
+                        <p id="grammarTip">"Dove vai?" uses the verb 'andare' (to go) in its second person singular form 'vai'.</p>
+                    </div>
+                    <div class="tip cultural-tip">
+                        <h4>Cultural Tip</h4>
+                        <p id="culturalTip">In Italy, it's common to greet friends with this question as a way of showing interest in their day.</p>
+                    </div>
+                </div>
+
+                <button onclick="markLessonComplete()" class="btn-success" id="completeButton">Mark as Complete</button>
+            </div>
+            
+            <button id="chatButton" class="btn-primary" onclick="toggleChat()">Practice with Zimi</button>
+        </div>
+
+        <!-- Chat Interface -->
+        <div id="chatInterface" class="chat-interface hidden">
+            <div class="chat-header">
+                <h3>Chat with Zimi</h3>
+                <button onclick="toggleChat()" class="close-btn">&times;</button>
+            </div>
+            <div id="chatMessages" class="chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your message...">
+                <button onclick="sendMessage()" class="btn-primary">Send</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { Configuration, OpenAIApi } = require('openai');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY
@@ -33,6 +34,11 @@ app.post('/api/chat', async (req, res) => {
         console.error('Error:', error);
         res.status(500).json({ error: 'An error occurred while processing your request.' });
     }
+});
+
+// Serve index.html for the root route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;

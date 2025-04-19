@@ -158,70 +158,56 @@ function toggleChat() {
     }
 }
 
-function addMessage(text, sender) {
-    const messagesDiv = document.getElementById('chatMessages');
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message', `${sender}-message`);
-    messageElement.textContent = text;
-    messagesDiv.appendChild(messageElement);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-async function sendMessage() {
+async function handleChat(event) {
+    event.preventDefault();
     const userInput = document.getElementById('userInput');
-    const userMessage = userInput.value.trim();
+    const message = userInput.value.trim();
     
-    if (!userMessage) return;
-    
+    if (!message) return;
+
     // Add user message to chat
-    addMessage(userMessage, 'user');
+    addMessage(message, 'user-message');
     userInput.value = '';
 
-    // Show typing indicator
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'typing-indicator';
-    typingIndicator.textContent = 'Zimi is typing...';
-    document.getElementById('chatMessages').appendChild(typingIndicator);
-
     try {
-        const currentLesson = lessons[currentLessonIndex];
-
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                message: userMessage,
-                lesson: currentLesson
-            })
+            body: JSON.stringify({ message })
         });
 
         if (!response.ok) {
-            throw new Error('Chat service temporarily unavailable');
+            throw new Error('Failed to get response');
         }
 
         const data = await response.json();
-        const botResponse = data.response;
-
-        // Remove typing indicator
-        typingIndicator.remove();
-
-        // Add bot response to chat
-        addMessage(botResponse, 'bot');
-
-        // Update chat history
-        chatHistory.push(
-            { role: "user", content: userMessage },
-            { role: "assistant", content: botResponse }
-        );
-
+        addMessage(data.response, 'bot-message');
     } catch (error) {
-        console.error('Chat error:', error);
-        typingIndicator.remove();
-        addMessage("I apologize, but I'm having trouble connecting right now. Please try again in a moment.", 'bot');
+        console.error('Error:', error);
+        addMessage('Sorry, I encountered an error. Please try again.', 'bot-message');
     }
 }
+
+function addMessage(text, className) {
+    const messagesContainer = document.querySelector('.chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.className = `message ${className}`;
+    messageElement.textContent = text;
+    messagesContainer.appendChild(messageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+// Add event listeners
+document.getElementById('userInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        handleChat(e);
+    }
+});
+
+document.querySelector('.send-button').addEventListener('click', handleChat);
 
 // Lesson Data
 const lessons = [

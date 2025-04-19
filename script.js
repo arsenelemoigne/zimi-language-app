@@ -285,6 +285,13 @@ const lessons = [
         translation: "Thank you very much!",
         grammarTip: "\"Mille\" literally means 'thousand', making this phrase literally mean 'a thousand thanks'.",
         culturalTip: "Italians are very expressive with their gratitude, and this is one of the most common ways to show appreciation."
+    },
+    {
+        id: 4,
+        phrase: "Un caffè, per favore.",
+        translation: "A coffee, please.",
+        grammarTip: "In Italian, 'un' is the masculine indefinite article (a/an) used before 'caffè'. 'Per favore' is more formal than 'prego' for saying please.",
+        culturalTip: "In Italy, 'un caffè' typically means an espresso. If you want an American-style coffee, you should ask for 'un caffè americano'."
     }
 ];
 
@@ -309,7 +316,7 @@ function saveUserProgress(progress) {
 function updateProgressDisplay() {
     const progress = getUserProgress();
     const completedCount = progress.completedLessons.length;
-    document.getElementById('userProgress').textContent = `Progress: ${completedCount}/3`;
+    document.getElementById('userProgress').textContent = `Progress: ${completedCount}/4`;
 }
 
 function loadLesson(index) {

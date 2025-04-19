@@ -1,8 +1,14 @@
 {
   "version": 2,
   "routes": [
+    { 
+      "src": "/main.html", 
+      "dest": "/main.html",
+      "headers": {
+        "Cache-Control": "no-store"
+      }
+    },
     { "src": "/", "dest": "/index.html" },
-    { "src": "/main", "dest": "/main.html" },
     { "src": "/signup", "dest": "/signup.html" },
     { "handle": "filesystem" }
   ]

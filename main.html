@@ -1,3 +1,102 @@
-<!-- Add this before the script.js reference -->
-<script src="config.js"></script>
-<script src="script.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zimi - Today's Lesson</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <h1>Zimi</h1>
+                <span class="brand-subtitle">Italian Learning Assistant</span>
+            </div>
+            <div class="nav-right">
+                <div class="progress-indicator">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span id="userProgress" class="progress-text">Progress: 0/4</span>
+                </div>
+                <button onclick="logout()" class="btn-secondary">Logout</button>
+            </div>
+        </nav>
+        
+        <main class="lesson-container">
+            <div class="lesson-header">
+                <button onclick="previousLesson()" class="btn-nav" id="prevButton">
+                    <span class="nav-arrow">←</span>
+                    <span class="nav-text">Previous</span>
+                </button>
+                <div class="lesson-title">
+                    <h2>Lesson <span id="lessonNumber">1</span></h2>
+                    <span id="lessonStatus" class="status-badge">In Progress</span>
+                </div>
+                <button onclick="nextLesson()" class="btn-nav" id="nextButton">
+                    <span class="nav-text">Next</span>
+                    <span class="nav-arrow">→</span>
+                </button>
+            </div>
+
+            <div class="lesson-content">
+                <div class="phrase-card">
+                    <div class="phrase-main">
+                        <h3 class="italian" id="lessonPhrase">Dove vai?</h3>
+                        <p class="translation" id="lessonTranslation">Where are you going?</p>
+                    </div>
+                    <button class="btn-play">
+                        <svg viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M8 5v14l11-7z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="tips-grid">
+                    <div class="tip-card grammar-tip">
+                        <div class="tip-icon">📝</div>
+                        <h4>Grammar Tip</h4>
+                        <p id="grammarTip">"Dove vai?" uses the verb 'andare' (to go) in its second person singular form 'vai'.</p>
+                    </div>
+                    <div class="tip-card cultural-tip">
+                        <div class="tip-icon">🇮🇹</div>
+                        <h4>Cultural Tip</h4>
+                        <p id="culturalTip">In Italy, it's common to greet friends with this question as a way of showing interest in their day.</p>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button onclick="markLessonComplete()" class="btn-success" id="completeButton">
+                        Mark as Complete
+                    </button>
+                    <button id="chatButton" class="btn-primary" onclick="toggleChat()">
+                        Practice with Zimi
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <div id="chatInterface" class="chat-interface hidden">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <div class="chat-avatar">🤖</div>
+                    <span>Chat with Zimi</span>
+                </div>
+                <button onclick="toggleChat()" class="close-button">×</button>
+            </div>
+            <div id="chatMessages" class="chat-messages"></div>
+            <div class="chat-input-container">
+                <input type="text" id="userInput" placeholder="Type your message in Italian or English..." />
+                <button onclick="sendMessage()" class="send-button">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 

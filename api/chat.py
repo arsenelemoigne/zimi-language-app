@@ -2,20 +2,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import openai
 import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
 # Configure OpenAI
-api_key = os.getenv('OPENAI_API_KEY')
-if not api_key:
-    raise ValueError("No OpenAI API key found. Please set OPENAI_API_KEY in your environment variables.")
-    
-openai.api_key = api_key
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -72,8 +64,7 @@ Remember: You're teaching a beginner, so keep it simple and encouraging!"""
         })
 
     except Exception as e:
-        print(f"Error in chat endpoint: {str(e)}")  # Server-side logging
-        return jsonify({'error': 'An error occurred while processing your request'}), 500
+        return jsonify({'error': str(e)}), 500
 
 # For local development
 if __name__ == '__main__':

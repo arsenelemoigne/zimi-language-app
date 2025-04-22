@@ -88,4 +88,131 @@ async function sendMessage() {
         typingIndicator.remove();
         addMessage('I apologize, but I encountered an error. Please try again.', 'bot');
     }
+}
+
+// Check if user is logged in
+function checkAuth() {
+    const userEmail = localStorage.getItem('userEmail');
+    if (!userEmail && window.location.pathname.includes('main.html')) {
+        window.location.href = 'index.html';
+    } else if (userEmail && window.location.pathname.includes('index.html')) {
+        window.location.href = 'main.html';
+    }
+}
+
+// User Management
+function getUsers() {
+    const users = localStorage.getItem('users');
+    return users ? JSON.parse(users) : [];
+}
+
+function saveUser(userData) {
+    const users = getUsers();
+    users.push(userData);
+    localStorage.setItem('users', JSON.stringify(users));
+}
+
+function findUser(email) {
+    const users = getUsers();
+    return users.find(user => user.email === email);
+}
+
+// Password Validation
+function validatePassword(password) {
+    const minLength = password.length >= 8;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[!@#$%^&*]/.test(password);
+    
+    return {
+        length: minLength,
+        upper: hasUpper,
+        number: hasNumber,
+        special: hasSpecial,
+        isValid: minLength && hasUpper && hasNumber && hasSpecial
+    };
+}
+
+// Handle signup form submission
+function handleSignup(event) {
+    event.preventDefault();
+    
+    const fullName = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Reset error messages
+    document.querySelectorAll('.error-message').forEach(elem => elem.textContent = '');
+    
+    // Validate full name
+    if (fullName.length < 2) {
+        document.getElementById('nameError').textContent = 'Please enter your full name';
+        return false;
+    }
+    
+    // Check if email already exists
+    if (findUser(email)) {
+        document.getElementById('emailError').textContent = 'This email is already registered';
+        return false;
+    }
+    
+    // Validate password
+    if (!validatePassword(password).isValid) {
+        document.getElementById('passwordError').textContent = 'Password does not meet requirements';
+        return false;
+    }
+    
+    // Check if passwords match
+    if (password !== confirmPassword) {
+        document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+        return false;
+    }
+    
+    // Save user data
+    const userData = {
+        fullName,
+        email,
+        password,
+        dateJoined: new Date().toISOString()
+    };
+    
+    saveUser(userData);
+    
+    // Store current user email for session
+    localStorage.setItem('userEmail', email);
+    
+    // Redirect to main page
+    window.location.href = 'main.html';
+    return false;
+}
+
+// Handle login form submission
+function handleLogin(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    
+    // Reset error messages
+    document.querySelectorAll('.error-message').forEach(elem => elem.textContent = '');
+    
+    // Find user
+    const user = findUser(email);
+    
+    if (!user || user.password !== password) {
+        document.getElementById('emailError').textContent = 'Invalid email or password';
+        return false;
+    }
+    
+    // Store current user email for session
+    localStorage.setItem('userEmail', email);
+    window.location.href = 'main.html';
+    return false;
+}
+
+// Handle logout
+function logout() {
+    localStorage.removeItem('userEmail');
+    window.location.href = 'index.html';
 } 

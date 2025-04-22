@@ -16,6 +16,12 @@ async function sendMessage() {
 
     try {
         const currentLesson = lessons[currentLessonIndex];
+        // Get API key using our new function
+        const apiKey = getOpenAIKey();
+        
+        if (!apiKey) {
+            throw new Error('API key not configured');
+        }
 
         // Prepare the conversation context
         const conversationHistory = chatHistory.slice(-4); // Keep last 4 messages for context
@@ -44,11 +50,11 @@ async function sendMessage() {
         
         Remember: You're teaching a beginner, so keep it simple and encouraging!`;
 
-        const response = await fetch(window.ENV.OPENAI_API_URL, {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${window.ENV.OPENAI_API_KEY}`
+                'Authorization': `Bearer ${apiKey}`
             },
             body: JSON.stringify({
                 model: "gpt-3.5-turbo",
@@ -84,8 +90,13 @@ async function sendMessage() {
         );
 
     } catch (error) {
-        console.error('Chat Error:', error);
+        console.error('Chat error:', error);
         typingIndicator.remove();
-        addMessage('I apologize, but I encountered an error. Please try again.', 'bot');
+        
+        if (error.message === 'API key not configured') {
+            addMessage("Sorry, there's a technical issue with the chatbot. Please try again later or contact support.", 'bot');
+        } else {
+            addMessage(`Error: ${error.message}. Please try again later.`, 'bot');
+        }
     }
-} 
+}
